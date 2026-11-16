@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>廣度優先搜尋 · 演算法圖鑑</title>
+<meta name="description" content="從起點一層一層往外擴散，找出無權圖的最短步數。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body class="cat-graph" data-slug="bfs">
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="../index.html">演算法圖鑑 <small>ALGO FIELD GUIDE</small></a>
+    <nav><a href="../index.html">所有演算法</a></nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="crumbs"><a href="../index.html">首頁</a> / 圖論</div>
+  <div class="badges">
+    <span class="tag">圖論</span>
+    <span class="diff" title="難度 1/3">●<span>●●</span></span>
+  </div>
+  <h1>廣度優先搜尋</h1>
+  <div class="en">Breadth-First Search</div>
+  <p class="lede">從起點一層一層往外擴散，找出無權圖的最短步數。</p>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="本頁目錄">
+    <p>CONTENTS</p>
+    <ol>
+      <li><a href="#intuition">直覺</a></li>
+      <li><a href="#steps">步驟</a></li>
+      <li><a href="#example">手算範例</a></li>
+      <li><a href="#complexity">複雜度</a></li>
+      <li><a href="#code">Python 實作</a></li>
+      <li><a href="#pitfalls">常見陷阱</a></li>
+      <li><a href="#related">相關演算法</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <section id="intuition">
+      <h2><span class="num">01</span>直覺</h2>
+      <p>把一顆石頭丟進池塘，水波會一圈一圈往外擴散：先碰到距離 1 的地方，再碰到距離 2 的地方。廣度優先搜尋（BFS）就是在圖上模擬這個水波。</p>
+      <p>關鍵工具是<strong>佇列（queue）</strong>：先發現的節點先處理，所以一定會把第 k 層全部處理完，才輪到第 k + 1 層。也因此，在每條邊長度都相同的圖上，第一次碰到某個節點時走的步數，就是最短步數。</p>
+      <div class="callout key">用佇列一層一層往外推，第一次碰到就是最短距離。</div>
+    </section>
+
+    <section id="steps">
+      <h2><span class="num">02</span>步驟</h2>
+      <ol class="steps">
+        <li>把起點的距離設為 0，放進佇列。</li>
+        <li>從佇列前端取出一個節點 <code>u</code>。</li>
+        <li>檢查 <code>u</code> 的每個鄰居 <code>v</code>：若還沒看過，令 <code>dist[v] = dist[u] + 1</code> 並放進佇列尾端。</li>
+        <li>重複第 2–3 步，直到佇列清空。</li>
+      </ol>
+    </section>
+
+    <section id="example">
+      <h2><span class="num">03</span>手算範例</h2>
+      <p>無向圖的邊為 A–B、A–C、B–D、C–D、C–E、D–F、E–F，從 A 出發。</p>
+      <div class="table-wrap">
+        <table class="trace">
+          <thead><tr><th>取出</th><th>新發現（距離）</th><th>佇列內容</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td>—</td><td class="hl">A(0)</td><td>A</td><td class="note">起點入佇列</td></tr>
+            <tr><td>A</td><td class="hl">B(1), C(1)</td><td>B C</td><td class="note">第 1 層</td></tr>
+            <tr><td>B</td><td class="hl">D(2)</td><td>C D</td><td class="note">A 已看過，略過</td></tr>
+            <tr><td>C</td><td class="hl">E(2)</td><td>D E</td><td class="note">A、D 已看過，只新增 E</td></tr>
+            <tr><td>D</td><td class="hl">F(3)</td><td>E F</td><td class="note">第 3 層</td></tr>
+            <tr><td>E</td><td>—</td><td>F</td><td class="note">C、F 都已看過</td></tr>
+            <tr><td>F</td><td>—</td><td>（空）</td><td class="note">佇列清空，結束</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>結果：A=0、B=1、C=1、D=2、E=2、F=3。注意 F 雖然也能從 E 到達，但在 D 那一步就已經以距離 3 被發現了。</p>
+    </section>
+
+    <section id="complexity">
+      <h2><span class="num">04</span>複雜度</h2>
+      <div class="cx-grid">
+        <div class="cx"><div class="label">時間（鄰接串列）</div><div class="value">O(V + E)</div><p class="why">每個節點進出佇列一次，每條邊最多被檢查兩次。</p></div>
+        <div class="cx"><div class="label">時間（鄰接矩陣）</div><div class="value">O(V²)</div><p class="why">找鄰居要掃整列，每個節點都要花 O(V)。</p></div>
+        <div class="cx"><div class="label">空間</div><div class="value">O(V)</div><p class="why">距離表與佇列最多各存 V 個節點。</p></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <h2><span class="num">05</span>Python 實作</h2>
+<pre><code>from collections import deque
+
+
+def bfs(graph: dict[str, list[str]], start: str) -&gt; dict[str, int]:
+    """回傳每個可到達節點與 start 之間的最短步數。"""
+    dist = {start: 0}
+    queue = deque([start])
+    while queue:
+        u = queue.popleft()             # 先進先出：一層一層處理
+        for v in graph[u]:
+            if v not in dist:           # 第一次看到就是最短距離
+                dist[v] = dist[u] + 1
+                queue.append(v)
+    return dist
+
+
+if __name__ == "__main__":
+    g = {
+        "A": ["B", "C"], "B": ["A", "D"], "C": ["A", "D", "E"],
+        "D": ["B", "C", "F"], "E": ["C", "F"], "F": ["D", "E"],
+    }
+    print(bfs(g, "A"))
+    # {'A': 0, 'B': 1, 'C': 1, 'D': 2, 'E': 2, 'F': 3}
+</code></pre>
+    </section>
+
+    <section id="pitfalls">
+      <h2><span class="num">06</span>常見陷阱</h2>
+      <div class="callout warn"><p><strong>出佇列時才標記已拜訪</strong>　同一個節點可能被好幾個鄰居重複放進佇列，浪費時間甚至算錯距離。要在<em>放進佇列的當下</em>就記錄距離。</p></div>
+      <div class="callout warn"><p><strong>用 list.pop(0) 當佇列</strong>　每次 <code>pop(0)</code> 都要搬移整個 list，是 O(n)。請用 <code>collections.deque</code> 的 <code>popleft()</code>。</p></div>
+      <div class="callout warn"><p><strong>拿來算加權圖的最短路徑</strong>　BFS 只數「幾步」，不看邊的權重。邊有不同長度時要改用 Dijkstra。</p></div>
+    </section>
+
+    <section id="related">
+      <h2><span class="num">07</span>相關演算法</h2>
+      <ul class="related-list">
+        <li><a href="dijkstra.html">Dijkstra 最短路徑</a>　把 BFS 的佇列換成優先佇列，就能處理邊有權重的圖。</li>
+      </ul>
+    </section>
+  </article>
+</div>
+
+<nav class="pager" id="pager" aria-label="上一個與下一個演算法"></nav>
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="../data/algorithms.js"></script>
+<script src="../assets/main.js"></script>
+</body>
+</html>

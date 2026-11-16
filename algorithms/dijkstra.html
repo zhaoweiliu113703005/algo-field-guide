@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dijkstra 最短路徑 · 演算法圖鑑</title>
+<meta name="description" content="每次確定一個離起點最近的節點，求非負權重圖的最短路徑。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body class="cat-graph" data-slug="dijkstra">
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="../index.html">演算法圖鑑 <small>ALGO FIELD GUIDE</small></a>
+    <nav><a href="../index.html">所有演算法</a></nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="crumbs"><a href="../index.html">首頁</a> / 圖論</div>
+  <div class="badges">
+    <span class="tag">圖論</span>
+    <span class="diff" title="難度 2/3">●●<span>●</span></span>
+  </div>
+  <h1>Dijkstra 最短路徑</h1>
+  <div class="en">Dijkstra's Algorithm</div>
+  <p class="lede">每次確定一個離起點最近的節點，求非負權重圖的最短路徑。</p>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="本頁目錄">
+    <p>CONTENTS</p>
+    <ol>
+      <li><a href="#intuition">直覺</a></li>
+      <li><a href="#steps">步驟</a></li>
+      <li><a href="#example">手算範例</a></li>
+      <li><a href="#complexity">複雜度</a></li>
+      <li><a href="#code">Python 實作</a></li>
+      <li><a href="#pitfalls">常見陷阱</a></li>
+      <li><a href="#related">相關演算法</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <section id="intuition">
+      <h2><span class="num">01</span>直覺</h2>
+      <p>從政大騎車去好幾個地方，每條路要花的時間不同。Dijkstra 的想法是：在所有「還沒確定」的地點中，目前估計最近的那一個，它的距離一定已經是最短了，因為任何繞路都只會更遠（前提是沒有負的路段）。</p>
+      <p>確定它之後，再用它去更新鄰居的估計值，這個動作叫<strong>鬆弛（relaxation）</strong>。用優先佇列（priority queue）就能每次快速拿出「目前最近」的節點。</p>
+      <div class="callout key">每次確定最近的那一個，再用它去縮短鄰居的距離。</div>
+    </section>
+
+    <section id="steps">
+      <h2><span class="num">02</span>步驟</h2>
+      <ol class="steps">
+        <li>起點距離設為 0，其餘設為無限大；把 <code>(0, 起點)</code> 放進優先佇列。</li>
+        <li>從優先佇列取出距離最小的 <code>(d, u)</code>。</li>
+        <li>若 <code>d</code> 大於目前記錄的 <code>dist[u]</code>，代表是過期紀錄，略過。</li>
+        <li>對 <code>u</code> 的每條邊 <code>(v, w)</code>：若 <code>d + w &lt; dist[v]</code>，更新 <code>dist[v]</code> 並把新距離放進佇列。</li>
+        <li>重複第 2–4 步，直到佇列清空。</li>
+      </ol>
+    </section>
+
+    <section id="example">
+      <h2><span class="num">03</span>手算範例</h2>
+      <p>無向圖的邊為 A–B(4)、A–C(1)、C–B(2)、B–D(1)、C–D(5)、D–E(3)，從 A 出發。表格中是每一步結束後的距離表，∞ 表示還沒到過。</p>
+      <div class="table-wrap">
+        <table class="trace">
+          <thead><tr><th>取出</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td>(0, A)</td><td>0</td><td class="hl">4</td><td class="hl">1</td><td>∞</td><td>∞</td><td class="note">從 A 鬆弛 B、C</td></tr>
+            <tr><td>(1, C)</td><td>0</td><td class="hl">3</td><td>1</td><td class="hl">6</td><td>∞</td><td class="note">經 C 到 B 只要 1+2=3，比 4 短</td></tr>
+            <tr><td>(3, B)</td><td>0</td><td>3</td><td>1</td><td class="hl">4</td><td>∞</td><td class="note">經 B 到 D 只要 3+1=4，比 6 短</td></tr>
+            <tr><td>(4, B)</td><td>0</td><td>3</td><td>1</td><td>4</td><td>∞</td><td class="note">過期紀錄（4 &gt; 3），略過</td></tr>
+            <tr><td>(4, D)</td><td>0</td><td>3</td><td>1</td><td>4</td><td class="hl">7</td><td class="note">從 D 鬆弛 E</td></tr>
+            <tr><td>(6, D)</td><td>0</td><td>3</td><td>1</td><td>4</td><td>7</td><td class="note">過期紀錄（6 &gt; 4），略過</td></tr>
+            <tr><td>(7, E)</td><td>0</td><td>3</td><td>1</td><td>4</td><td>7</td><td class="note">佇列清空，結束</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>最短距離：A=0、B=3、C=1、D=4、E=7。A 到 E 的最短路徑是 A → C → B → D → E。</p>
+    </section>
+
+    <section id="complexity">
+      <h2><span class="num">04</span>複雜度</h2>
+      <div class="cx-grid">
+        <div class="cx"><div class="label">時間（二元堆積）</div><div class="value">O((V + E) log V)</div><p class="why">每條邊最多觸發一次 push，每次 push／pop 為 O(log V)。</p></div>
+        <div class="cx"><div class="label">時間（陣列找最小）</div><div class="value">O(V²)</div><p class="why">每回合掃一遍陣列找最小值；適合邊非常密的圖。</p></div>
+        <div class="cx"><div class="label">空間</div><div class="value">O(V + E)</div><p class="why">距離表 O(V)，佇列中可能累積 O(E) 筆過期紀錄。</p></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <h2><span class="num">05</span>Python 實作</h2>
+<pre><code>import heapq
+
+
+def dijkstra(graph: dict[str, list[tuple[str, int]]], start: str) -&gt; dict[str, float]:
+    """回傳 start 到每個節點的最短距離（邊權重必須非負）。"""
+    dist = {u: float("inf") for u in graph}
+    dist[start] = 0
+    heap = [(0, start)]                 # (目前距離, 節點)
+    while heap:
+        d, u = heapq.heappop(heap)
+        if d &gt; dist[u]:                 # 過期的舊紀錄，略過
+            continue
+        for v, w in graph[u]:
+            if d + w &lt; dist[v]:         # 鬆弛：找到更短的路
+                dist[v] = d + w
+                heapq.heappush(heap, (dist[v], v))
+    return dist
+
+
+if __name__ == "__main__":
+    g = {
+        "A": [("B", 4), ("C", 1)],
+        "B": [("A", 4), ("C", 2), ("D", 1)],
+        "C": [("A", 1), ("B", 2), ("D", 5)],
+        "D": [("B", 1), ("C", 5), ("E", 3)],
+        "E": [("D", 3)],
+    }
+    print(dijkstra(g, "A"))
+    # {'A': 0, 'B': 3, 'C': 1, 'D': 4, 'E': 7}
+</code></pre>
+    </section>
+
+    <section id="pitfalls">
+      <h2><span class="num">06</span>常見陷阱</h2>
+      <div class="callout warn"><p><strong>圖中有負權重</strong>　「目前最近的就已確定」這個前提會失效，答案可能錯。有負邊時改用 Bellman-Ford。</p></div>
+      <div class="callout warn"><p><strong>放進佇列時就標記為完成</strong>　節點要在<em>被取出</em>時才算確定，不是被放進去時。這點和 BFS 剛好相反，很容易寫混。</p></div>
+      <div class="callout warn"><p><strong>沒有略過過期紀錄</strong>　Python 的 <code>heapq</code> 不能修改既有元素，同一節點會留下多筆舊距離。少了 <code>if d &gt; dist[u]: continue</code> 雖然結果仍對，但會做大量白工。</p></div>
+    </section>
+
+    <section id="related">
+      <h2><span class="num">07</span>相關演算法</h2>
+      <ul class="related-list">
+        <li><a href="bfs.html">廣度優先搜尋</a>　所有邊權重都是 1 時，Dijkstra 會退化成 BFS，而 BFS 用普通佇列就夠了。</li>
+      </ul>
+    </section>
+  </article>
+</div>
+
+<nav class="pager" id="pager" aria-label="上一個與下一個演算法"></nav>
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="../data/algorithms.js"></script>
+<script src="../assets/main.js"></script>
+</body>
+</html>

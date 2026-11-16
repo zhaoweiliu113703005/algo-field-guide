@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--
+  演算法頁面範本。新增頁面時：
+  1. 複製成 algorithms/<slug>.html
+  2. 替換所有 {{…}}，依 AGENTS.md 第 7 節撰寫 7 個區塊
+  3. 到 data/algorithms.js 登錄
+  4. 執行 python3 scripts/check.py
+  （複製後請刪除這段註解）
+-->
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{中文名}} · 演算法圖鑑</title>
+<meta name="description" content="{{summary}}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body class="cat-{{category}}" data-slug="{{slug}}">
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="../index.html">演算法圖鑑 <small>ALGO FIELD GUIDE</small></a>
+    <nav><a href="../index.html">所有演算法</a></nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="crumbs"><a href="../index.html">首頁</a> / {{分類顯示名稱}}</div>
+  <div class="badges">
+    <span class="tag">{{分類顯示名稱}}</span>
+    <span class="diff" title="難度 {{n}}/3">{{●●○ 以 ● 與 <span>●</span> 表示}}</span>
+  </div>
+  <h1>{{中文名}}</h1>
+  <div class="en">{{English Name}}</div>
+  <p class="lede">{{summary}}</p>
+</div>
+
+<div class="layout">
+  <nav class="toc" aria-label="本頁目錄">
+    <p>CONTENTS</p>
+    <ol>
+      <li><a href="#intuition">直覺</a></li>
+      <li><a href="#steps">步驟</a></li>
+      <li><a href="#example">手算範例</a></li>
+      <li><a href="#complexity">複雜度</a></li>
+      <li><a href="#code">Python 實作</a></li>
+      <li><a href="#pitfalls">常見陷阱</a></li>
+      <li><a href="#related">相關演算法</a></li>
+    </ol>
+  </nav>
+
+  <article>
+    <section id="intuition">
+      <h2><span class="num">01</span>直覺</h2>
+      <p>{{2–4 句白話說明 + 生活化比喻}}</p>
+      <div class="callout key">{{一句話總結}}</div>
+    </section>
+
+    <section id="steps">
+      <h2><span class="num">02</span>步驟</h2>
+      <ol class="steps">
+        <li>{{動詞開頭的一句話，共 3–7 步}}</li>
+      </ol>
+    </section>
+
+    <section id="example">
+      <h2><span class="num">03</span>手算範例</h2>
+      <p>{{輸入說明}}</p>
+      <div class="table-wrap">
+        <table class="trace">
+          <thead><tr><th>{{欄位}}</th><th>說明</th></tr></thead>
+          <tbody>
+            <tr><td class="hl">{{值}}</td><td class="note">{{這一步發生什麼}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>{{一句話說明結果}}</p>
+    </section>
+
+    <section id="complexity">
+      <h2><span class="num">04</span>複雜度</h2>
+      <div class="cx-grid">
+        <div class="cx"><div class="label">最佳時間</div><div class="value">{{O(…)}}</div><p class="why">{{為什麼}}</p></div>
+        <div class="cx"><div class="label">平均時間</div><div class="value">{{O(…)}}</div><p class="why">{{為什麼}}</p></div>
+        <div class="cx"><div class="label">最差時間</div><div class="value">{{O(…)}}</div><p class="why">{{為什麼}}</p></div>
+        <div class="cx"><div class="label">空間</div><div class="value">{{O(…)}}</div><p class="why">{{為什麼}}</p></div>
+      </div>
+    </section>
+
+    <section id="code">
+      <h2><span class="num">05</span>Python 實作</h2>
+<pre><code>{{可直接執行的 Python 3，≤ 40 行，&lt; 與 &gt; 要跳脫}}</code></pre>
+    </section>
+
+    <section id="pitfalls">
+      <h2><span class="num">06</span>常見陷阱</h2>
+      <div class="callout warn"><p><strong>{{錯誤名稱}}</strong>　{{怎麼避免}}</p></div>
+    </section>
+
+    <section id="related">
+      <h2><span class="num">07</span>相關演算法</h2>
+      <ul class="related-list">
+        <li><a href="{{slug}}.html">{{中文名}}</a>　{{一句話說明關係}}</li>
+      </ul>
+    </section>
+  </article>
+</div>
+
+<nav class="pager" id="pager" aria-label="上一個與下一個演算法"></nav>
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="../data/algorithms.js"></script>
+<script src="../assets/main.js"></script>
+</body>
+</html>
