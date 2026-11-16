@@ -13,7 +13,6 @@
 | 檔案 | 角色 |
 |---|---|
 | `AGENTS.md` | 專案規則（唯一真相來源） |
-| `CLAUDE.md` | 指向 AGENTS.md，讓 Claude Code 也會讀到 |
 | `algorithms/_template.html` | 新頁面的範本，7 個固定區塊 |
 | `data/algorithms.js` | 演算法登錄表，首頁卡片與上一頁／下一頁都由它產生 |
 | `scripts/check.py` | 把規則變成可執行的檢查：區塊順序、佔位符、registry 一致性、連結，並**實際執行每頁的 Python 程式碼** |

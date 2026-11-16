@@ -36,7 +36,6 @@
 ```
 algo-field-guide/
 ├── AGENTS.md              ← 本文件（專案規則，唯一真相來源）
-├── CLAUDE.md              ← 只有一行：指向 AGENTS.md
 ├── README.md              ← 給人看的專案介紹
 ├── index.html             ← 首頁：搜尋、分類篩選、卡片列表（由 JS 依 registry 產生）
 ├── .nojekyll              ← 讓 GitHub Pages 不經過 Jekyll
