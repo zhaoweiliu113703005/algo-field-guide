@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>演算法圖鑑 Algo Field Guide</title>
+<meta name="description" content="一頁一個演算法的複習圖鑑：直覺、步驟、手算範例、複雜度、Python 實作與常見陷阱。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a class="brand" href="index.html">演算法圖鑑 <small>ALGO FIELD GUIDE</small></a>
+  </div>
+</header>
+
+<div class="home-hero">
+  <div class="kicker">一頁一個演算法</div>
+  <h1>演算法圖鑑</h1>
+  <p>考前複習用的演算法筆記。每一頁都用同一套順序講完一個演算法：直覺、步驟、手算範例、複雜度、Python 實作、常見陷阱、相關演算法。</p>
+</div>
+
+<div class="toolbar">
+  <input id="search" class="search" type="search" placeholder="搜尋名稱、英文或關鍵字，例如：最短路徑" aria-label="搜尋演算法">
+  <div id="chips" class="chips" role="group" aria-label="依分類篩選"></div>
+</div>
+<div class="toolbar"><small id="count" class="count"></small></div>
+
+<main id="grid" class="grid" aria-live="polite"></main>
+
+<footer class="site-footer" id="site-footer"></footer>
+
+<script src="data/algorithms.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>
